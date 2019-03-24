@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import './SearchBar';
 import './VerseList';
+import {VerseCursor} from './VerseCursor';
+import {AppStateStore} from './store';
+
 import SearchBar from './SearchBar';
 import VerseList from './VerseList';
 var ESV = require('./assets/ESV.json');
@@ -13,20 +16,40 @@ class App extends Component {
     this.state = {
       ESV: ESV,
       ChiUns: ChiUns,
+      verseList: [],
     };
-    console.log('%o', this.state.ChiUns.books[0].chapters[0].verses[0].text);
+
+    AppStateStore.observeOsisText().subscribe((osisText) =>
+        {
+            if (osisText) {
+                this.getVerses(osisText);
+            }
+        }
+        );
   }
 
-  onSearchBarClicked(q) {
-    console.log('onSearchBarClicked %o', q);
+  getVerses(osisText) {
+    const [start, end] = osisText.split('-');
+    const startVerseCursor = VerseCursor.fromOsis(start);
+    let endVerseCursor = startVerseCursor.next();
+    if (end) {
+      endVerseCursor = VerseCursor.fromOsis(end).next();
+    }
+    const verseList = [];
+    let currentVerseCursor = startVerseCursor;
+    while(currentVerseCursor && !currentVerseCursor.equals(endVerseCursor)) {
+      verseList.push(currentVerseCursor);
+      currentVerseCursor = currentVerseCursor.next();
+    }
+    this.setState({verseList});
   }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <SearchBar onClick={(q) => this.onSearchBarClicked(q)}></SearchBar>
-          <VerseList></VerseList>
+          <SearchBar ></SearchBar>
+          <VerseList value={this.state.verseList}></VerseList>
         </header>
       </div>
     );
