@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+var ESV = require('./assets/ESV.json');
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ESV: ESV,
+    };
+    console.log('%o', this.state.ESV.books[0].chapters[0].verses[0].text);
+  }
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <p>
-            Edit <code>src/App.js</code> and save to reload.
+            In progress.
+            {this.state.ESV.version}
           </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
         </header>
       </div>
     );
