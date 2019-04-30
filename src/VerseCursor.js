@@ -16,12 +16,20 @@ export class VerseCursor {
     }
 
     getVerseNumber() {
-        return this.chapter + ':' + this.verse;
+        return (this.chapter+1) + ':' + (this.verse+1);
     }
 
     getVerse() {
         return ChiUns.books[this.book].chapters[this.chapter].verses[this.verse].text
         + '\n' + ESV.books[this.book].chapters[this.chapter].verses[this.verse].text;
+    }
+
+    getVerseCn() {
+        return ChiUns.books[this.book].chapters[this.chapter].verses[this.verse].text;
+    }
+
+    getVerseEn() {
+        return ESV.books[this.book].chapters[this.chapter].verses[this.verse].text;
     }
 
     next() {

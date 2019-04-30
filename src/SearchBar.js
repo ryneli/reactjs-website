@@ -31,13 +31,17 @@ class SearchBar extends Component {
 
     render() {
         return (
-        <div>
+        <div >
             <input 
             id='search-textbox' 
             type='text'
             onKeyUp={(evt) => this.onSearchTextBoxKeyUp(evt)}
-            placeholder='eg: John3:16'></input>
-            <button onClick={() => this.onSearchClicked()}>Search</button>
+            placeholder='eg: John3:16'
+            style={{fontSize: '40px'}}
+            ></input>
+            <button onClick={() => this.onSearchClicked()}
+            style={{fontSize: '40px'}}
+            >Search</button>
         </div>);
     }
 }

@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
 import './SearchBar';
-import './VerseList';
+import './VerseSlide';
 import {VerseCursor} from './VerseCursor';
 import {AppStateStore} from './store';
 
 import SearchBar from './SearchBar';
 import VerseList from './VerseList';
+import VerseSlide from './VerseSlide';
 var ESV = require('./assets/ESV.json');
 var ChiUns = require('./assets/ChiUns.json');
 
@@ -17,15 +18,72 @@ class App extends Component {
       ESV: ESV,
       ChiUns: ChiUns,
       verseList: [],
+      current: 0,
     };
 
     AppStateStore.observeOsisText().subscribe((osisText) =>
-        {
-            if (osisText) {
-                this.getVerses(osisText);
-            }
+      {
+        
+        const verseList = [];
+        let osisTextList = [];
+        if (osisText.includes(',')) {
+          osisTextList = osisText.split(',').map((s) => s.trim());
+        } else if (osisText !== '') {
+          osisTextList.push(osisText);
         }
-        );
+        
+        console.log('App#updateVerse osisTextList %o', osisTextList);
+        osisTextList.forEach((s) => {
+          const subVerseList = this.getVerses(s);
+          console.log('App#updateVerse subVerseList %o', subVerseList);
+          subVerseList.forEach((e) => verseList.push(e));
+        });
+
+        this.setState({verseList});
+      }
+    );
+    
+    document.addEventListener('keydown', (e) => this.onKeyDown(e));
+  }
+
+  onKeyDown(e) {
+    switch(e.keyCode) {
+      case /* ArrowRight = */ 39 :
+        this.nextVerse();
+        break;
+      case /* ArrowLeft = */ 37:
+        this.previousVerse();
+        break;
+      case /* Escape = */ 27:
+        this.showSearch();
+        break;
+      default:
+        // do nothing
+    }
+  }
+
+  nextVerse() {
+    if (this.state.verseList.length > 0) {
+      let next = this.state.current + 1;
+      if (next === this.state.verseList.length) {
+        next = 0;
+      }
+      this.setState({current: next});
+    }
+  }
+
+  previousVerse() {
+    if (this.state.verseList.length > 0) {
+      let next = this.state.current - 1;
+      if (next === -1) {
+        next = this.state.verseList.length - 1;
+      }
+      this.setState({current: next});
+    }
+  }
+
+  showSearch() {
+    this.setState({verseList: []});
   }
 
   getVerses(osisText) {
@@ -41,18 +99,27 @@ class App extends Component {
       verseList.push(currentVerseCursor);
       currentVerseCursor = currentVerseCursor.next();
     }
-    this.setState({verseList});
+    return verseList;
   }
 
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <SearchBar ></SearchBar>
-          <VerseList value={this.state.verseList}></VerseList>
-        </header>
-      </div>
-    );
+    if (this.state.verseList.length > 0) {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <VerseSlide value={this.state.verseList[this.state.current]}></VerseSlide>
+          </header>
+        </div>
+      );
+    } else {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <SearchBar ></SearchBar>
+          </header>
+        </div>
+      );
+    }
   }
 }
 

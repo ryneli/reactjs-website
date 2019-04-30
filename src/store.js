@@ -21,7 +21,6 @@ export class AppStateStore {
     static observeOsisText() {
         return AppStateStore.INSTANCE._state$.pipe(
             map((state) => state.osisText),
-            distinctUntilChanged(),
         )
     }
 }

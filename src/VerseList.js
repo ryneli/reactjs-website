@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-const ESV = require('./assets/ESV.json');
-const ChiUns = require('./assets/ChiUns.json');
-const BibleBookIndex = require('./assets/BibleBookIndex.json');
 
 class VerseList extends Component {
     constructor(props) {
